@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: easy-learning
+    env: python
+    rootDir: mywebapp
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app -b 0.0.0.0:$PORT
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: FLASK_DEBUG
+        value: "0"
