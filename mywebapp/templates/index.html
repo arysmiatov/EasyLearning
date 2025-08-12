@@ -197,7 +197,10 @@
           <div class="subtitle">Practice arithmetic: addition, subtraction, multiplication, and division</div>
         </div>
       </div>
-      <button class="back hidden" id="back-btn" onclick="handleBack()">← Back</button>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="back hidden" id="back-btn" onclick="handleBack()">← Back</button>
+        <button class="ghost" id="install-btn" style="display:none;">Install app</button>
+      </div>
     </div>
 
     <!-- Главное меню -->
@@ -461,9 +464,26 @@
       if (e.key === 'Enter') checkAnswer();
     });
 
+    // PWA: service worker + install prompt
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js').catch(() => {});
     }
+    let deferredPrompt;
+    const installBtn = document.getElementById('install-btn');
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-flex';
+    });
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installBtn.style.display = 'none';
+      }
+      deferredPrompt = null;
+    });
   </script>
 </body>
 </html>
