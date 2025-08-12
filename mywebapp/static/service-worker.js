@@ -1,7 +1,8 @@
-const CACHE_NAME = 'mywebapp-v2';
+const CACHE_NAME = 'mywebapp-v3';
 const urlsToCache = [
   '/',
-  '/static/manifest.json',
+  '/manifest.json',
+  '/service-worker.js',
   '/static/icon.svg'
 ];
 
