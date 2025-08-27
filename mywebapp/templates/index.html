@@ -226,6 +226,11 @@
           <div class="desc">Divide evenly with whole-number answers</div>
           <div class="emj">➗</div>
         </button>
+        <button class="card-btn" onclick="selectOperation('complex')">
+          <div class="title">Complex</div>
+          <div class="desc">Mixed operations and order of operations</div>
+          <div class="emj">🔢</div>
+        </button>
       </div>
     </section>
 
@@ -344,6 +349,49 @@
             const dividend = divisor * correctAnswer; // гарантируем целый ответ
             problem = `${dividend} ÷ ${divisor} = ?`;
             answer = correctAnswer;
+            break;
+          }
+          case 'complex': {
+            if (currentDifficulty === 'easy') {
+              let a, b, c, attempts = 0;
+              do {
+                c = randInt(2, 10);
+                let res = randInt(2, 20);
+                a = randInt(1, 30);
+                b = res * c - a;
+                attempts++;
+              } while ((a + b) % c !== 0 || b < 1 || attempts > 100);
+              problem = `(${a} + ${b}) ÷ ${c} = ?`;
+              answer = (a + b) / c;
+            } else if (currentDifficulty === 'medium') {
+              let a, b, c, d, e, attempts = 0;
+              do {
+                e = randInt(2, 8);
+                let res = randInt(2, 20);
+                c = randInt(10, 40);
+                d = randInt(2, c - 1);
+                let denominator = c - d;
+                b = randInt(1, 40);
+                a = res * denominator * e + b;
+                attempts++;
+              } while (((a - b) % (c - d) !== 0) || (c - d) === 0 || attempts > 100);
+              problem = `(${a} - ${b}) ÷ (${c} - ${d}) × ${e} = ?`;
+              answer = ((a - b) / (c - d)) * e;
+            } else {
+              let a, b, c, d, e, attempts = 0;
+              do {
+                c = randInt(2, 10);
+                let res = randInt(2, 20);
+                a = randInt(10, 100);
+                b = res * c - a;
+                d = randInt(20, 60);
+                e = randInt(5, d - 1);
+                attempts++;
+              } while (((a + b) % c !== 0) || (d - e) <= 0 || attempts > 100);
+              problem = `((${a} + ${b}) ÷ ${c}) × (${d} - ${e}) = ?`;
+              answer = ((a + b) / c) * (d - e);
+            }
+            answer = Math.round(answer); // всегда целое
             break;
           }
         }
