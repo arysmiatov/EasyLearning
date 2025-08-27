@@ -3,6 +3,14 @@ import os
 
 app = Flask(__name__)
 
+@app.after_request
+def add_header(response):
+    # Запрещаем кеширование для всех страниц
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 @app.route('/')
 def index():
     return render_template('index.html')

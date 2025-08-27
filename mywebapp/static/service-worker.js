@@ -1,63 +1,38 @@
-const CACHE_NAME = 'mywebapp-v3';
+const CACHE_NAME = 'math-practice-v1.1';
 const urlsToCache = [
   '/',
+  '/static/icon.svg',
   '/manifest.json',
-  '/service-worker.js',
-  '/static/icon.svg'
+  '/service-worker.js'
 ];
 
-// Установка service worker и кэширование ресурсов
-self.addEventListener('install', function(event) {
+self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(function(cache) {
-        console.log('Кэш открыт');
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Перехват запросов и возврат кэшированных ресурсов
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
-      .then(function(response) {
-        // Возвращаем кэшированный ресурс, если он есть
-        if (response) {
-          return response;
+      .then(response => {
+        // Для HTML страниц всегда загружаем свежую версию
+        if (event.request.url.includes('/') && !event.request.url.includes('.')) {
+          return fetch(event.request);
         }
-        
-        // Иначе делаем сетевой запрос
-        return fetch(event.request).then(
-          function(response) {
-            // Проверяем, что получили валидный ответ
-            if(!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Клонируем ответ
-            var responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then(function(cache) {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          }
-        );
+        // Для остальных файлов используем кеш, но с проверкой обновлений
+        return response || fetch(event.request);
       })
   );
 });
 
-// Обновление кэша при активации
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(function(cacheNames) {
+    caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map(function(cacheName) {
+        cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {
-            console.log('Удаляем старый кэш:', cacheName);
             return caches.delete(cacheName);
           }
         })
