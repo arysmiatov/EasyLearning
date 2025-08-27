@@ -102,8 +102,22 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 14px;
+    }
+
+    /* На больших экранах (планшеты и десктопы) показываем по 2 в строку */
+    @media (min-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* На очень больших экранах можно показать по 3 в строку */
+    @media (min-width: 1200px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
 
     .card-btn {
