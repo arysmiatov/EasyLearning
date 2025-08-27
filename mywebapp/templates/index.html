@@ -106,20 +106,6 @@
       gap: 14px;
     }
 
-    /* На больших экранах (планшеты и десктопы) показываем по 2 в строку */
-    @media (min-width: 768px) {
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    /* На очень больших экранах можно показать по 3 в строку */
-    @media (min-width: 1200px) {
-      .grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
     .card-btn {
       position: relative;
       border: 0;
@@ -372,39 +358,39 @@
             if (currentDifficulty === 'easy') {
               let a, b, c, attempts = 0;
               do {
-                c = randInt(2, 10);
-                let res = randInt(2, 20);
-                a = randInt(1, 30);
+                c = randInt(2, 6);
+                let res = randInt(2, 8);
+                a = randInt(1, 10);
                 b = res * c - a;
                 attempts++;
-              } while ((a + b) % c !== 0 || b < 1 || attempts > 100);
+              } while ((a + b) % c !== 0 || b < 1 || b > 15 || attempts > 100);
               problem = `(${a} + ${b}) ÷ ${c} = ?`;
               answer = (a + b) / c;
             } else if (currentDifficulty === 'medium') {
               let a, b, c, d, e, attempts = 0;
               do {
-                e = randInt(2, 8);
-                let res = randInt(2, 20);
-                c = randInt(10, 40);
+                e = randInt(2, 5);
+                let res = randInt(2, 6);
+                c = randInt(4, 10);
                 d = randInt(2, c - 1);
                 let denominator = c - d;
-                b = randInt(1, 40);
+                b = randInt(1, 8);
                 a = res * denominator * e + b;
                 attempts++;
-              } while (((a - b) % (c - d) !== 0) || (c - d) === 0 || attempts > 100);
+              } while (((a - b) % (c - d) !== 0) || (c - d) === 0 || a > 15 || attempts > 100);
               problem = `(${a} - ${b}) ÷ (${c} - ${d}) × ${e} = ?`;
               answer = ((a - b) / (c - d)) * e;
             } else {
               let a, b, c, d, e, attempts = 0;
               do {
-                c = randInt(2, 10);
-                let res = randInt(2, 20);
-                a = randInt(10, 100);
+                c = randInt(2, 6);
+                let res = randInt(2, 6);
+                a = randInt(3, 10);
                 b = res * c - a;
-                d = randInt(20, 60);
-                e = randInt(5, d - 1);
+                d = randInt(6, 12);
+                e = randInt(2, 6);
                 attempts++;
-              } while (((a + b) % c !== 0) || (d - e) <= 0 || attempts > 100);
+              } while (((a + b) % c !== 0) || (d - e) <= 0 || b > 15 || attempts > 100);
               problem = `((${a} + ${b}) ÷ ${c}) × (${d} - ${e}) = ?`;
               answer = ((a + b) / c) * (d - e);
             }
