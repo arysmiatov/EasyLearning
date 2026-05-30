@@ -1,521 +1,860 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <title>Math Practice</title>
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#0ea5e9" />
-  <link rel="icon" type="image/svg+xml" href="/static/icon.svg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-1: #0ea5e9;
-      --bg-2: #6366f1;
-      --text: #0f172a;
-      --muted: #64748b;
-      --primary: #0ea5e9;
-      --primary-2: #22d3ee;
-      --success: #22c55e;
-      --warn: #f59e0b;
-      --danger: #ef4444;
-      --card-bg: rgba(255, 255, 255, 0.16);
-      --card-border: rgba(255, 255, 255, 0.35);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>Number Lab — Math Practice</title>
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#ff5747" />
+<link rel="icon" type="image/svg+xml" href="/static/icon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Figtree:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg, #f4f1ea);
+    font-family: var(--body-font, sans-serif);
+    color: var(--ink, #1a1512);
+    overscroll-behavior: none;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  .display { font-family: var(--display-font); font-feature-settings: "tnum" 1; }
 
-    * { box-sizing: border-box; }
+  .app-root { min-height: 100dvh; background: var(--bg); display: flex; justify-content: center; transition: background .4s ease; }
+  .stage {
+    width: 100%; max-width: 560px; min-height: 100dvh; background: var(--app);
+    position: relative; display: flex; flex-direction: column;
+    transition: background .4s ease;
+  }
+  @media (min-width: 620px) {
+    .app-root { align-items: flex-start; padding: 0; }
+    .stage { box-shadow: 0 0 90px -40px rgba(0,0,0,.5); }
+  }
+  .screen { flex: 1; display: flex; flex-direction: column; padding: clamp(18px, 5vw, 30px); }
 
-    body {
-      margin: 0;
-      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--text);
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(120deg, var(--bg-1), var(--bg-2));
-      background-size: 200% 200%;
-      animation: bgMove 12s ease infinite;
-      padding: 24px;
-    }
+  /* ---------- HOME ---------- */
+  .home { gap: 22px; padding-bottom: 30px; }
+  .home-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: max(8px, env(safe-area-inset-top)); }
+  .brand { display: flex; align-items: center; gap: 13px; }
+  .brand-mark {
+    width: 50px; height: 50px; border-radius: 16px; background: var(--accent); color: var(--accent-ink);
+    display: grid; place-items: center; font-family: var(--display-font); font-weight: 700; font-size: 24px;
+    position: relative; box-shadow: var(--key-shadow);
+  }
+  .brand-mark span { position: absolute; right: 7px; bottom: 4px; font-size: 13px; opacity: .85; }
+  .brand-name { font-family: var(--display-font); font-size: 23px; font-weight: 700; letter-spacing: -.02em; }
+  .brand-sub { font-size: 13px; color: var(--muted); margin-top: 1px; }
+  .theme-toggle {
+    display: flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 999px;
+    background: var(--surface); border: 1.5px solid var(--line); font-size: 13px; font-weight: 600; color: var(--ink);
+  }
+  .theme-dots { display: flex; }
+  .theme-dots i { width: 11px; height: 11px; border-radius: 50%; display: block; margin-left: -4px; border: 1.5px solid var(--surface); }
+  .theme-dots i:first-child { margin-left: 0; }
 
-    @keyframes bgMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+  .block { display: flex; flex-direction: column; gap: 11px; }
+  .block-label { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 
-    .container {
-      width: min(880px, 100%);
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 20px 60px rgba(2, 6, 23, 0.25);
-      padding: 28px;
-    }
+  .op-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .op-card {
+    display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 16px 8px;
+    background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius-sm); color: var(--ink);
+    transition: transform .12s ease, border-color .15s, background .15s;
+  }
+  .op-card .op-ico { color: var(--muted); transition: color .15s; }
+  .op-name { font-size: 13px; font-weight: 600; }
+  .op-card:active { transform: scale(.96); }
+  .op-card.is-on { border-color: var(--accent); background: var(--accent-soft); }
+  .op-card.is-on .op-ico { color: var(--accent); }
+  [data-theme-dark="1"] .op-card.is-on { color: #fff; }
 
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
+  .lvl-list { display: flex; flex-direction: column; gap: 9px; }
+  .lvl-row {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+    background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius-sm); text-align: left;
+    transition: border-color .15s, background .15s, transform .12s;
+  }
+  .lvl-row:active { transform: scale(.99); }
+  .lvl-row.is-on { border-color: var(--accent); background: var(--accent-soft); }
+  .lvl-pips { display: flex; gap: 4px; }
+  .lvl-pips i { width: 7px; height: 18px; border-radius: 4px; background: var(--line); }
+  .lvl-row.is-on .lvl-pips i.on { background: var(--accent); }
+  .lvl-pips i.on { background: var(--muted); }
+  .lvl-text { flex: 1; display: flex; flex-direction: column; }
+  .lvl-text b { font-size: 16px; font-weight: 600; }
+  .lvl-text small { font-size: 12.5px; color: var(--muted); }
+  .lvl-mode { font-size: 11.5px; font-weight: 600; color: var(--muted); border: 1.5px solid var(--line); padding: 4px 9px; border-radius: 999px; }
+  .lvl-row.is-on .lvl-mode { color: var(--accent); border-color: var(--accent); }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+  .home-foot { margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding-top: 8px; }
+  .home-foot-meta { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: var(--muted); font-weight: 500; flex-wrap: wrap; }
+  .home-foot-meta i { opacity: .5; }
 
-    .logo {
-      width: 44px;
-      height: 44px;
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: white;
-      font-size: 24px;
-      box-shadow: 0 10px 24px rgba(14, 165, 233, 0.35);
-    }
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 16px;
+    border-radius: var(--radius-sm); padding: 15px 22px; box-shadow: var(--key-shadow);
+    transition: transform .12s ease, filter .15s;
+  }
+  .btn-primary.big { width: 100%; font-size: 18px; padding: 18px; border-radius: var(--radius); }
+  .btn-primary:active { transform: translateY(2px); box-shadow: none; }
+  .btn-primary:hover { filter: brightness(1.04); }
+  .btn-ghost { padding: 14px; font-weight: 600; font-size: 15px; color: var(--muted); border-radius: var(--radius-sm); }
+  .btn-ghost:hover { color: var(--ink); }
 
-    h1 {
-      font-size: 1.6rem;
-      margin: 0;
-    }
-    .subtitle { color: var(--muted); margin-top: 6px; font-size: .95rem; }
+  /* ---------- ROUND ---------- */
+  .round { gap: 16px; }
+  .round-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: max(4px, env(safe-area-inset-top)); }
+  .icon-btn { width: 42px; height: 42px; border-radius: 13px; background: var(--surface); border: 1.5px solid var(--line); display: grid; place-items: center; color: var(--ink); }
+  .icon-btn:active { transform: scale(.94); }
+  .round-meta { display: flex; flex-direction: column; align-items: center; line-height: 1.25; }
+  .round-op { font-weight: 600; font-size: 15px; }
+  .round-lvl { font-size: 12.5px; color: var(--muted); }
+  .round-points { display: flex; flex-direction: column; align-items: flex-end; min-width: 52px; }
+  .round-points b { font-family: var(--display-font); font-size: 20px; color: var(--accent); line-height: 1; }
+  .round-points small { font-size: 11px; color: var(--muted); }
 
-    .panel {
-      margin-top: 12px;
-      background: rgba(255,255,255,0.24);
-      border: 1px solid rgba(255,255,255,0.35);
-      border-radius: 18px;
-      padding: 20px;
-    }
+  .progress-track { display: flex; gap: 5px; }
+  .seg { flex: 1; height: 8px; border-radius: 4px; background: var(--line); transition: background .3s; }
+  .seg-active { background: var(--accent); }
+  .seg-done { background: var(--good); }
+  .seg-retry { background: var(--gold); }
+  .round-count { text-align: center; font-size: 13px; color: var(--muted); font-weight: 500; margin-top: -6px; }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
+  .q-card {
+    flex: 1; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--card-shadow); padding: 24px; transition: border-color .25s;
+  }
+  .q-expr { font-family: var(--display-font); font-weight: 600; font-size: clamp(40px, 13vw, 66px); letter-spacing: -.01em; text-align: center; line-height: 1.05; }
+  .q-eq { font-family: var(--display-font); font-size: 26px; color: var(--muted); }
+  .q-answer { min-height: 64px; display: grid; place-items: center; }
+  .q-typed { font-family: var(--display-font); font-weight: 700; font-size: clamp(44px, 14vw, 64px); color: var(--accent); line-height: 1; }
+  .q-typed.q-empty { color: var(--line); }
+  .q-card.q-solved { border-color: var(--good); }
+  .q-card.q-solved .q-typed { color: var(--good); }
+  .q-card.q-shake { animation: shake .4s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(3px)} }
 
-    .card-btn {
-      position: relative;
-      border: 0;
-      border-radius: 16px;
-      padding: 22px 18px;
-      cursor: pointer;
-      color: white;
-      text-align: left;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
-      border: 1px solid rgba(255,255,255,0.35);
-      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
-      overflow: hidden;
-    }
-    .card-btn .title { font-weight: 700; font-size: 1.15rem; letter-spacing: .2px; }
-    .card-btn .desc { opacity: .85; margin-top: 6px; font-size: .9rem; }
-    .card-btn .emj { position: absolute; right: 14px; bottom: 14px; font-size: 28px; filter: drop-shadow(0 6px 16px rgba(0,0,0,.2)); }
-    .card-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(2, 6, 23, 0.25); background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08)); }
+  .answer-zone { display: flex; flex-direction: column; gap: 12px; padding-bottom: max(4px, env(safe-area-inset-bottom)); }
 
-    .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-    .chip {
-      border: 0; border-radius: 12px; padding: 14px 16px; cursor: pointer; color: white;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      transition: transform .2s ease, box-shadow .2s ease;
-    }
-    .chip:nth-child(2) { background: linear-gradient(135deg, #f59e0b, #d97706); }
-    .chip:nth-child(3) { background: linear-gradient(135deg, #ef4444, #dc2626); }
-    .chip:hover { transform: translateY(-2px); box-shadow: 0 10px 18px rgba(0,0,0,.18); }
+  .feedback { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 15px; padding: 11px; border-radius: var(--radius-sm); animation: pop-in .25s ease; }
+  .feedback-good { background: var(--good-soft); color: var(--good); }
+  .feedback-bad { background: var(--bad-soft); color: var(--bad); }
+  .feedback-icon { display: grid; place-items: center; }
+  @keyframes pop-in { from { opacity: 0; transform: translateY(6px) scale(.96); } to { opacity: 1; transform: none; } }
 
-    .back {
-      appearance: none; border: 0; background: transparent; color: white; cursor: pointer;
-      padding: 8px 12px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px;
-      transition: background .2s ease;
-    }
-    .back:hover { background: rgba(255,255,255,0.12); }
+  .hint { display: flex; align-items: flex-start; gap: 9px; font-size: 14.5px; line-height: 1.4; color: var(--ink); background: var(--accent-soft); border-radius: var(--radius-sm); padding: 12px 14px; animation: pop-in .25s ease; }
+  [data-theme-dark="1"] .hint { color: var(--ink); }
+  .hint-tag { flex-shrink: 0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); background: var(--surface); padding: 3px 8px; border-radius: 999px; margin-top: 1px; }
 
-    /* Problem */
-    .progress { height: 10px; background: rgba(255,255,255,0.26); border-radius: 999px; overflow: hidden; }
-    .progress > .bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--success), #10b981); transition: width .25s ease; }
-    .meta { color: white; opacity: .9; margin: 10px 0 18px; }
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .choice {
+    font-family: var(--display-font); font-weight: 600; font-size: 28px; padding: 20px; border-radius: var(--radius-sm);
+    background: var(--surface); border: 2px solid var(--line); color: var(--ink); box-shadow: var(--key-shadow);
+    transition: transform .1s, background .15s, border-color .15s, opacity .2s;
+  }
+  .choice:active { transform: translateY(2px); box-shadow: none; }
+  .choice:hover:not(:disabled) { border-color: var(--accent); }
+  .choice-elim { opacity: .32; box-shadow: none; pointer-events: none; }
+  .choice-correct { background: var(--good); border-color: var(--good); color: #fff; box-shadow: none; }
+  .choice-wrong { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
 
-    .problem-card {
-      background: rgba(255,255,255,0.24);
-      border: 1px solid rgba(255,255,255,0.35);
-      border-radius: 16px;
-      padding: 24px;
-    }
-    .equation { font-weight: 700; font-size: clamp(2rem, 6vw, 3rem); color: white; text-shadow: 0 4px 18px rgba(0,0,0,.25); }
+  .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+  .key {
+    font-family: var(--display-font); font-weight: 600; font-size: 26px; padding: 16px 0; border-radius: var(--radius-sm);
+    background: var(--pad-bg); border: 1.5px solid var(--line); color: var(--ink); box-shadow: var(--key-shadow);
+    min-height: 58px; transition: transform .08s, background .15s;
+  }
+  .key:active { transform: translateY(2px); box-shadow: none; background: var(--accent-soft); }
+  .key-util { color: var(--muted); }
+  .key-submit { grid-column: 1 / -1; background: var(--accent); color: var(--accent-ink); font-size: 19px; padding: 17px; }
+  .key:disabled { opacity: .5; }
 
-    .answer-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; }
-    .input {
-      width: 160px; padding: 14px 16px; font-size: 1.2rem; text-align: center; color: var(--text);
-      background: white; border: 2px solid transparent; border-radius: 12px;
-      outline: none; transition: border-color .2s ease, transform .2s ease;
-    }
-    .input:focus { border-color: var(--primary); transform: translateY(-1px); }
+  /* ---------- RESULTS ---------- */
+  .results { align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .results-card { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; z-index: 2; }
+  .star-row { display: flex; gap: 8px; margin-bottom: 6px; }
+  .results-title { font-family: var(--display-font); font-size: clamp(30px, 8vw, 40px); font-weight: 700; letter-spacing: -.02em; margin-top: 4px; }
+  .results-sub { color: var(--muted); font-size: 15px; margin-bottom: 18px; }
+  .stat-grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+  .stat { background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 16px; display: flex; flex-direction: column; gap: 3px; }
+  .stat-big { grid-column: 1 / -1; background: var(--accent-soft); border-color: transparent; }
+  .stat-big .stat-value { color: var(--accent); }
+  .stat-value { font-family: var(--display-font); font-weight: 700; font-size: 30px; line-height: 1; }
+  .stat-label { font-size: 12.5px; color: var(--muted); font-weight: 500; }
+  .results-actions { width: 100%; display: flex; flex-direction: column; gap: 6px; }
 
-    .btn-primary {
-      border: 0; border-radius: 12px; padding: 14px 18px; cursor: pointer; color: white; font-weight: 600;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      box-shadow: 0 10px 22px rgba(14,165,233,.35);
-      transition: transform .2s ease, box-shadow .2s ease;
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(14,165,233,.45); }
+  @keyframes star-pop { 0% { transform: scale(0) rotate(-30deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
 
-    .feedback { min-height: 22px; font-size: .95rem; margin-top: 8px; }
-    .ok { color: #dcfce7; }
-    .bad { color: #fee2e2; }
+  .confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+  .confetti span { position: absolute; top: -20px; border-radius: 2px; animation-name: fall; animation-timing-function: linear; animation-fill-mode: forwards; }
+  @keyframes fall { to { transform: translateY(115vh) rotate(540deg); opacity: .9; } }
 
-    .shake { animation: shake .3s ease; }
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(6px); } 75% { transform: translateX(-6px); } }
-
-    /* Congrats */
-    .congrats {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: white; border-radius: 18px; padding: 28px; text-align: center;
-      box-shadow: 0 18px 44px rgba(22,163,74,.35);
-    }
-    .congrats h2 { margin: 0 0 6px; font-size: 2rem; }
-    .congrats p { margin: 0 0 16px; opacity: .95; }
-    .ghost { background: white; color: #16a34a; border: 0; padding: 12px 16px; border-radius: 12px; cursor: pointer; }
-
-    .hidden { display: none; }
-  </style>
+  /* ---------- PWA install button ---------- */
+  .install-fab {
+    position: fixed; bottom: 20px; right: 20px; z-index: 100;
+    display: none; align-items: center; gap: 8px;
+    background: var(--accent); color: var(--accent-ink);
+    border: none; border-radius: 999px; padding: 12px 18px;
+    font-size: 14px; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,.2);
+    cursor: pointer;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="brand">
-        <div class="logo">🧮</div>
-        <div>
-          <h1>Math</h1>
-          <div class="subtitle">Practice arithmetic: addition, subtraction, multiplication, and division</div>
+  <div id="root"></div>
+  <button id="install-btn" class="install-fab">Install app</button>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+  <script type="text/babel">
+{% raw %}
+// ============================================================
+// THEMES
+// ============================================================
+const THEMES = {
+  pop: {
+    id: "pop", label: "Pop", blurb: "Bright & bold",
+    swatch: ["#faf8f4", "#ff5747", "#15110e"], dark: false,
+    vars: {
+      "--bg": "#f4f1ea", "--app": "#fbf9f5", "--surface": "#ffffff",
+      "--ink": "#1a1512", "--muted": "#8a8178", "--line": "#e7e1d6",
+      "--accent": "#ff5747", "--accent-soft": "#ffe9e5", "--accent-ink": "#ffffff",
+      "--good": "#1f9d6b", "--good-soft": "#e1f3ea", "--bad": "#e23b54", "--bad-soft": "#fce3e7",
+      "--gold": "#f5a623", "--display-font": "'Space Grotesk', sans-serif",
+      "--body-font": "'Figtree', sans-serif", "--radius": "22px", "--radius-sm": "14px",
+      "--key-shadow": "0 4px 0 rgba(21,17,14,0.12)", "--card-shadow": "0 18px 50px -28px rgba(21,17,14,0.35)",
+      "--pad-bg": "#f1ece2",
+    },
+  },
+  calm: {
+    id: "calm", label: "Calm", blurb: "Soft pastel",
+    swatch: ["#eef2f6", "#5a9e8b", "#2c3a44"], dark: false,
+    vars: {
+      "--bg": "#e6ecf1", "--app": "#f4f7fa", "--surface": "#ffffff",
+      "--ink": "#27343d", "--muted": "#8095a1", "--line": "#dde6ec",
+      "--accent": "#4f9d8a", "--accent-soft": "#e0efea", "--accent-ink": "#ffffff",
+      "--good": "#3f9e7c", "--good-soft": "#e2f1ea", "--bad": "#df7b86", "--bad-soft": "#f8e6e8",
+      "--gold": "#e0a64e", "--display-font": "'Fredoka', sans-serif",
+      "--body-font": "'Figtree', sans-serif", "--radius": "26px", "--radius-sm": "16px",
+      "--key-shadow": "0 4px 0 rgba(39,52,61,0.08)", "--card-shadow": "0 22px 60px -34px rgba(39,52,61,0.4)",
+      "--pad-bg": "#e8eef2",
+    },
+  },
+  neon: {
+    id: "neon", label: "Neon", blurb: "Dark glow",
+    swatch: ["#0e1424", "#5fe3c9", "#a78bfa"], dark: true,
+    vars: {
+      "--bg": "#080c17", "--app": "#0e1424", "--surface": "#161e33",
+      "--ink": "#eef2ff", "--muted": "#7f88a8", "--line": "#26304b",
+      "--accent": "#5fe3c9", "--accent-soft": "#16302c", "--accent-ink": "#06231d",
+      "--good": "#54e6b0", "--good-soft": "#123227", "--bad": "#ff6b8a", "--bad-soft": "#341823",
+      "--gold": "#ffd166", "--display-font": "'Space Grotesk', sans-serif",
+      "--body-font": "'Figtree', sans-serif", "--radius": "22px", "--radius-sm": "14px",
+      "--key-shadow": "0 4px 0 rgba(0,0,0,0.5)", "--card-shadow": "0 24px 70px -30px rgba(0,0,0,0.8)",
+      "--pad-bg": "#101729",
+    },
+  },
+};
+
+function applyTheme(el, themeId, accentOverride) {
+  const theme = THEMES[themeId] || THEMES.pop;
+  Object.entries(theme.vars).forEach(([k, v]) => el.style.setProperty(k, v));
+  if (accentOverride) el.style.setProperty("--accent", accentOverride);
+  el.dataset.themeDark = theme.dark ? "1" : "0";
+}
+
+// ============================================================
+// PROBLEMS
+// ============================================================
+const OPERATIONS = [
+  { id: "add", label: "Addition", sign: "+", glyph: "+" },
+  { id: "sub", label: "Subtraction", sign: "−", glyph: "−" },
+  { id: "mul", label: "Multiplication", sign: "×", glyph: "×" },
+  { id: "div", label: "Division", sign: "÷", glyph: "÷" },
+  { id: "mix", label: "Mixed", sign: "( )", glyph: "÷×" },
+];
+
+const LEVELS = [
+  { id: 1, label: "Starter", blurb: "Numbers 1–10", input: "choice" },
+  { id: 2, label: "Growing", blurb: "Numbers up to 20", input: "choice" },
+  { id: 3, label: "Challenge", blurb: "Bigger numbers", input: "keypad" },
+  { id: 4, label: "Master", blurb: "Multi-step & brackets", input: "keypad" },
+];
+
+const rnd = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+function answerMode(operationId, level) {
+  if (operationId === "mix" && level >= 2) return "keypad";
+  return level <= 2 ? "choice" : "keypad";
+}
+
+function addProblem(level) {
+  let a, b;
+  if (level === 1) { a = rnd(1, 9); b = rnd(1, 9); }
+  else if (level === 2) { a = rnd(2, 14); b = rnd(2, 18); }
+  else if (level === 3) { a = rnd(12, 89); b = rnd(11, 99); }
+  else { a = rnd(120, 480); b = rnd(80, 360); }
+  return { text: `${a} + ${b}`, answer: a + b, hint: addHint(a, b) };
+}
+
+function subProblem(level) {
+  let a, b;
+  if (level === 1) { a = rnd(3, 10); b = rnd(1, a); }
+  else if (level === 2) { a = rnd(8, 20); b = rnd(1, a); }
+  else if (level === 3) { a = rnd(25, 99); b = rnd(5, a - 1); }
+  else { a = rnd(150, 600); b = rnd(40, a - 20); }
+  return { text: `${a} − ${b}`, answer: a - b, hint: subHint(a, b) };
+}
+
+function mulProblem(level) {
+  let a, b;
+  if (level === 1) { a = rnd(1, 5); b = rnd(1, 5); }
+  else if (level === 2) { a = rnd(2, 10); b = rnd(2, 9); }
+  else if (level === 3) { a = rnd(3, 12); b = rnd(3, 12); }
+  else { a = rnd(6, 19); b = rnd(4, 12); }
+  return { text: `${a} × ${b}`, answer: a * b, hint: mulHint(a, b) };
+}
+
+function divProblem(level) {
+  let b, q;
+  if (level === 1) { b = rnd(1, 5); q = rnd(1, 5); }
+  else if (level === 2) { b = rnd(2, 10); q = rnd(2, 9); }
+  else if (level === 3) { b = rnd(3, 12); q = rnd(3, 12); }
+  else { b = rnd(4, 12); q = rnd(8, 20); }
+  const a = b * q;
+  return { text: `${a} ÷ ${b}`, answer: q, hint: divHint(a, b, q) };
+}
+
+function mixProblem(level) {
+  if (level === 1) {
+    const a = rnd(2, 9), b = rnd(1, 9), c = rnd(1, Math.min(a + b, 9));
+    return { text: `${a} + ${b} − ${c}`, answer: a + b - c, hint: "Work left to right: first add, then subtract." };
+  }
+  const templates = [];
+  if (level === 2) {
+    templates.push(() => { const a = rnd(2, 8), b = rnd(2, 8), c = rnd(2, 5);
+      return { text: `(${a} + ${b}) × ${c}`, answer: (a + b) * c, hint: `Solve the brackets first: ${a} + ${b} = ${a + b}.` }; });
+    templates.push(() => { const a = rnd(4, 9), b = rnd(1, a - 1), c = rnd(2, 5);
+      return { text: `(${a} − ${b}) × ${c}`, answer: (a - b) * c, hint: `Solve the brackets first: ${a} − ${b} = ${a - b}.` }; });
+    templates.push(() => { const a = rnd(2, 9), b = rnd(2, 9), c = rnd(1, 9);
+      return { text: `${a} × ${b} + ${c}`, answer: a * b + c, hint: `Multiply first: ${a} × ${b} = ${a * b}, then add ${c}.` }; });
+  } else if (level === 3) {
+    templates.push(() => { const a = rnd(3, 12), b = rnd(2, 9), c = rnd(2, 6);
+      return { text: `(${a} + ${b}) × ${c}`, answer: (a + b) * c, hint: `Brackets first: ${a} + ${b} = ${a + b}.` }; });
+    templates.push(() => { const c = rnd(2, 6), q = rnd(2, 8), a = c * q, b = rnd(1, 9);
+      return { text: `(${a} ÷ ${c}) + ${b}`, answer: q + b, hint: `Brackets first: ${a} ÷ ${c} = ${q}.` }; });
+    templates.push(() => { const a = rnd(3, 9), b = rnd(2, 9), c = rnd(2, 9);
+      return { text: `${a} × ${b} − ${c}`, answer: a * b - c, hint: `Multiply first: ${a} × ${b} = ${a * b}, then subtract ${c}.` }; });
+  } else {
+    templates.push(() => { const a = rnd(4, 12), b = rnd(3, 9), c = rnd(2, 6), d = rnd(2, 12);
+      return { text: `(${a} + ${b}) × ${c} − ${d}`, answer: (a + b) * c - d, hint: `Brackets first: ${a} + ${b} = ${a + b}, then × ${c}.` }; });
+    templates.push(() => { const c = rnd(2, 6), q = rnd(3, 9), a = c * q, b = rnd(2, 9), e = rnd(2, 9);
+      return { text: `(${a} ÷ ${c}) × ${b} + ${e}`, answer: q * b + e, hint: `Brackets first: ${a} ÷ ${c} = ${q}.` }; });
+    templates.push(() => { const a = rnd(6, 14), b = rnd(3, 9), c = rnd(2, 9), d = rnd(2, 9);
+      return { text: `${a} × ${b} − (${c} + ${d})`, answer: a * b - (c + d), hint: `Brackets first: ${c} + ${d} = ${c + d}.` }; });
+  }
+  return pick(templates)();
+}
+
+function addHint(a, b) {
+  const big = Math.max(a, b), small = Math.min(a, b);
+  if (big < 20) return `Start at ${big}, then count up ${small} more.`;
+  return `Add the tens, then the ones.`;
+}
+function subHint(a, b) {
+  if (a < 25) return `Start at ${a} and count back ${b}.`;
+  return `Subtract the tens first, then the ones.`;
+}
+function mulHint(a, b) {
+  const small = Math.min(a, b), big = Math.max(a, b);
+  if (small <= 5) return `${small} groups of ${big} — add ${big} a total of ${small} times.`;
+  return `Think of it as ${small} × ${big}. Skip-count by ${big}.`;
+}
+function divHint(a, b, q) {
+  return `How many ${b}'s fit into ${a}? Count up: ${b}, ${b * 2}, ${b * 3}…`;
+}
+
+const GENERATORS = { add: addProblem, sub: subProblem, mul: mulProblem, div: divProblem, mix: mixProblem };
+
+function generateProblem(operationId, level) {
+  const p = GENERATORS[operationId](level);
+  p.operationId = operationId;
+  p.level = level;
+  return p;
+}
+
+function makeChoices(answer) {
+  const set = new Set([answer]);
+  const spread = Math.max(2, Math.round(Math.abs(answer) * 0.25)) + 3;
+  let guard = 0;
+  while (set.size < 4 && guard < 60) {
+    guard++;
+    const delta = rnd(1, spread) * (Math.random() < 0.5 ? -1 : 1);
+    const cand = answer + delta;
+    if (cand >= 0 && cand !== answer) set.add(cand);
+  }
+  let n = answer + 1;
+  while (set.size < 4) { if (n >= 0) set.add(n); n++; }
+  const arr = Array.from(set);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ============================================================
+// UI COMPONENTS
+// ============================================================
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+function ProgressTrack({ total, current, results }) {
+  return (
+    <div className="progress-track">
+      {Array.from({ length: total }).map((_, i) => {
+        let cls = "seg";
+        if (i < current) cls += results[i] === "retry" ? " seg-retry" : " seg-done";
+        else if (i === current) cls += " seg-active";
+        return <div key={i} className={cls} />;
+      })}
+    </div>
+  );
+}
+
+function StarRow({ count, size = 34, animate = false }) {
+  return (
+    <div className="star-row">
+      {[0, 1, 2].map((i) => (
+        <Star key={i} filled={i < count} size={size}
+          style={animate ? { animation: `star-pop 0.5s ${0.15 * i + 0.2}s cubic-bezier(.2,1.4,.4,1) both` } : null} />
+      ))}
+    </div>
+  );
+}
+
+function Star({ filled, size, style }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={style}
+      fill={filled ? "var(--gold)" : "none"} stroke={filled ? "var(--gold)" : "var(--line)"} strokeWidth="2" strokeLinejoin="round">
+      <path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 18.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" />
+    </svg>
+  );
+}
+
+function Keypad({ value, onInput, onDelete, onSubmit, disabled, canSubmit }) {
+  const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "neg", "0", "del"];
+  return (
+    <div className="keypad">
+      {keys.map((k) => {
+        if (k === "del")
+          return <button key={k} className="key key-util" onClick={onDelete} disabled={disabled} aria-label="delete">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 5H9l-6 7 6 7h11a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z" />
+              <path d="M16 9l-4 4M12 9l4 4" />
+            </svg>
+          </button>;
+        if (k === "neg")
+          return <button key={k} className="key key-util" onClick={() => onInput("-")} disabled={disabled} aria-label="minus">&minus;</button>;
+        return <button key={k} className="key" onClick={() => onInput(k)} disabled={disabled}>{k}</button>;
+      })}
+      <button className="key key-submit" onClick={onSubmit} disabled={disabled || !canSubmit}>Check</button>
+    </div>
+  );
+}
+
+function ChoiceGrid({ choices, onPick, disabled, eliminated, picked, answer, locked }) {
+  return (
+    <div className="choice-grid">
+      {choices.map((c, i) => {
+        const isElim = eliminated.includes(c);
+        let cls = "choice";
+        if (isElim) cls += " choice-elim";
+        if (locked && c === answer) cls += " choice-correct";
+        if (locked && picked === c && c !== answer) cls += " choice-wrong";
+        return (
+          <button key={i} className={cls} disabled={disabled || isElim} onClick={() => onPick(c)}>{c}</button>
+        );
+      })}
+    </div>
+  );
+}
+
+function Feedback({ state, message }) {
+  if (!state) return null;
+  return (
+    <div className={`feedback feedback-${state}`}>
+      <span className="feedback-icon">
+        {state === "good" ? (
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+        ) : (
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+        )}
+      </span>
+      {message}
+    </div>
+  );
+}
+
+function Confetti({ run }) {
+  if (!run) return null;
+  const colors = ["var(--accent)", "var(--gold)", "var(--good)", "var(--bad)"];
+  const bits = Array.from({ length: 44 });
+  return (
+    <div className="confetti">
+      {bits.map((_, i) => {
+        const left = Math.random() * 100;
+        const delay = Math.random() * 0.5;
+        const dur = 1.6 + Math.random() * 1.4;
+        const rot = Math.random() * 360;
+        const c = colors[i % colors.length];
+        const w = 7 + Math.random() * 7;
+        return <span key={i} style={{
+          left: left + "%", background: c, width: w, height: w * (0.5 + Math.random()),
+          animationDelay: delay + "s", animationDuration: dur + "s", transform: `rotate(${rot}deg)`,
+        }} />;
+      })}
+    </div>
+  );
+}
+
+function OpIcon({ id, size = 26 }) {
+  const common = { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2.4, strokeLinecap: "round", strokeLinejoin: "round" };
+  switch (id) {
+    case "add": return <svg {...common}><path d="M12 5v14M5 12h14" /></svg>;
+    case "sub": return <svg {...common}><path d="M5 12h14" /></svg>;
+    case "mul": return <svg {...common}><path d="M6 6l12 12M18 6L6 18" /></svg>;
+    case "div": return <svg {...common}><path d="M5 12h14" /><circle cx="12" cy="7" r="1.4" fill="currentColor" /><circle cx="12" cy="17" r="1.4" fill="currentColor" /></svg>;
+    default: return <svg {...common}><path d="M8 4c-2 2-2 14 0 16M16 4c2 2 2 14 0 16" /></svg>;
+  }
+}
+
+// ============================================================
+// SCREENS
+// ============================================================
+
+/* --- HOME --- */
+function HomeScreen({ onStart, themeId, onCycleTheme, beep }) {
+  const [op, setOp] = useState("add");
+  const [level, setLevel] = useState(1);
+  const opMeta = OPERATIONS.find((o) => o.id === op);
+  const mode = answerMode(op, level);
+
+  return (
+    <div className="screen home">
+      <header className="home-head">
+        <div className="brand">
+          <div className="brand-mark">&times;<span>+</span></div>
+          <div>
+            <h1 className="brand-name">Number Lab</h1>
+            <p className="brand-sub">Practice math, one round at a time</p>
+          </div>
         </div>
-      </div>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <button class="back hidden" id="back-btn" onclick="handleBack()">← Back</button>
-        <button class="ghost" id="install-btn" style="display:none;">Install app</button>
+        <button className="theme-toggle" onClick={() => { beep(660); onCycleTheme(); }} aria-label="Change look">
+          <span className="theme-dots">
+            {THEMES[themeId].swatch.map((c, i) => <i key={i} style={{ background: c }} />)}
+          </span>
+          {THEMES[themeId].label}
+        </button>
+      </header>
+
+      <section className="block">
+        <div className="block-label">Choose an operation</div>
+        <div className="op-grid">
+          {OPERATIONS.map((o) => (
+            <button key={o.id} className={"op-card" + (op === o.id ? " is-on" : "")} onClick={() => { setOp(o.id); beep(520); }}>
+              <span className="op-ico"><OpIcon id={o.id} size={28} /></span>
+              <span className="op-name">{o.label}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="block">
+        <div className="block-label">Pick a difficulty</div>
+        <div className="lvl-list">
+          {LEVELS.map((l) => (
+            <button key={l.id} className={"lvl-row" + (level === l.id ? " is-on" : "")} onClick={() => { setLevel(l.id); beep(580); }}>
+              <span className="lvl-pips">
+                {[1, 2, 3, 4].map((n) => <i key={n} className={n <= l.id ? "on" : ""} />)}
+              </span>
+              <span className="lvl-text">
+                <b>{l.label}</b>
+                <small>{l.blurb}</small>
+              </span>
+              <span className="lvl-mode">{answerMode(op, l.id) === "keypad" ? "Type" : "Choose"}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <div className="home-foot">
+        <div className="home-foot-meta">
+          <span>{opMeta.label}</span><i>&middot;</i><span>{LEVELS[level - 1].label}</span><i>&middot;</i>
+          <span>{mode === "keypad" ? "Type the answer" : "Tap an answer"}</span>
+        </div>
+        <button className="btn-primary big" onClick={() => { beep(720); onStart(op, level); }}>
+          Start round
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </button>
       </div>
     </div>
+  );
+}
 
-    <!-- Главное меню -->
-    <section id="main-menu" class="panel">
-      <div class="grid">
-        <button class="card-btn" onclick="selectOperation('addition')">
-          <div class="title">Addition</div>
-          <div class="desc">Add numbers and build speed</div>
-          <div class="emj">➕</div>
-        </button>
-        <button class="card-btn" onclick="selectOperation('subtraction')">
-          <div class="title">Subtraction</div>
-          <div class="desc">Train accuracy and attention</div>
-          <div class="emj">➖</div>
-        </button>
-        <button class="card-btn" onclick="selectOperation('multiplication')">
-          <div class="title">Multiplication</div>
-          <div class="desc">Mental math and times tables</div>
-          <div class="emj">✖️</div>
-        </button>
-        <button class="card-btn" onclick="selectOperation('division')">
-          <div class="title">Division</div>
-          <div class="desc">Divide evenly with whole-number answers</div>
-          <div class="emj">➗</div>
-        </button>
-        <button class="card-btn" onclick="selectOperation('complex')">
-          <div class="title">Complex</div>
-          <div class="desc">Mixed operations and order of operations</div>
-          <div class="emj">🔢</div>
-        </button>
-      </div>
-    </section>
+/* --- ROUND --- */
+function buildStep(op, level) {
+  const p = generateProblem(op, level);
+  if (answerMode(op, level) === "choice") p.choices = makeChoices(p.answer);
+  return p;
+}
 
-    <!-- Выбор сложности -->
-    <section id="difficulty-menu" class="panel hidden">
-      <div class="choices">
-        <button class="chip" onclick="selectDifficulty('easy')">🟢 Easy</button>
-        <button class="chip" onclick="selectDifficulty('medium')">🟡 Medium</button>
-        <button class="chip" onclick="selectDifficulty('hard')">🔴 Hard</button>
-      </div>
-    </section>
+const PRAISE = ["Correct!", "Nice!", "Perfect!", "Brilliant!", "Well done!", "Exactly!", "Spot on!"];
+function pickPraise() { return PRAISE[Math.floor(Math.random() * PRAISE.length)]; }
 
-    <!-- Блок задач -->
-    <section id="math-problem" class="panel hidden">
-      <div class="progress"><div id="progress-bar" class="bar"></div></div>
-      <div id="progress-text" class="meta">Problem 1 of 10</div>
-      <div class="problem-card">
-        <div id="problem-text" class="equation">2 + 3 = ?</div>
-        <div class="answer-row">
-          <input id="answer-input" type="number" class="input" placeholder="Answer" inputmode="numeric" />
-          <button class="btn-primary" onclick="checkAnswer()">Check</button>
+function RoundScreen({ config, onFinish, onExit, beep }) {
+  const { op, level, roundLength } = config;
+  const opMeta = OPERATIONS.find((o) => o.id === op);
+  const mode = answerMode(op, level);
+
+  const [stepIndex, setStepIndex] = useState(0);
+  const [problem, setProblem] = useState(() => buildStep(op, level));
+  const [typed, setTyped] = useState("");
+  const [attempts, setAttempts] = useState(0);
+  const [feedback, setFeedback] = useState(null);
+  const [hintShown, setHintShown] = useState(false);
+  const [locked, setLocked] = useState(false);
+  const [picked, setPicked] = useState(null);
+  const [eliminated, setEliminated] = useState([]);
+
+  const statsRef = useRef({ results: [], mistakes: 0, points: 0, perfect: 0, start: Date.now() });
+  const stats = statsRef.current;
+
+  const advance = useCallback((wasPerfect) => {
+    const next = stepIndex + 1;
+    if (next >= roundLength) {
+      const elapsed = Math.round((Date.now() - stats.start) / 1000);
+      onFinish({
+        mistakes: stats.mistakes, points: stats.points, perfect: stats.perfect,
+        total: roundLength, seconds: elapsed,
+        stars: stats.perfect >= roundLength - 1 ? 3 : stats.perfect >= Math.ceil(roundLength * 0.6) ? 2 : 1,
+        config,
+      });
+      return;
+    }
+    setStepIndex(next);
+    setProblem(buildStep(op, level));
+    setTyped(""); setAttempts(0); setFeedback(null); setHintShown(false); setLocked(false); setPicked(null); setEliminated([]);
+  }, [stepIndex, roundLength]);
+
+  function registerCorrect() {
+    const wrong = attempts;
+    const stepPts = [100, 60, 40, 20][Math.min(wrong, 3)];
+    stats.points += stepPts;
+    if (wrong === 0) stats.perfect += 1;
+    stats.results.push(wrong === 0 ? "good" : "retry");
+    beep(880);
+    setLocked(true);
+    setFeedback({ state: "good", message: wrong === 0 ? pickPraise() : "Got it!" });
+    setTimeout(() => advance(wrong === 0), 850);
+  }
+
+  function registerWrong(val) {
+    const a = attempts + 1;
+    setAttempts(a);
+    stats.mistakes += 1;
+    beep(180);
+    if (a >= 2) setHintShown(true);
+    setFeedback({ state: "bad", message: a >= 2 ? "Not yet — here’s a hint." : "Try again!" });
+    if (mode === "choice") setEliminated((e) => [...e, val]);
+  }
+
+  function checkAnswer(val) {
+    if (locked) return;
+    if (val === problem.answer) registerCorrect();
+    else registerWrong(val);
+  }
+
+  const onInput = (ch) => { if (locked) return; setFeedback(null); setTyped((t) => (t.length < 6 ? t + ch : t)); };
+  const onDelete = () => { if (locked) return; setTyped((t) => t.slice(0, -1)); };
+  const onSubmit = () => { if (!typed.length || locked) return; checkAnswer(parseInt(typed, 10)); };
+
+  useEffect(() => {
+    if (mode !== "keypad") return;
+    const h = (e) => {
+      if (locked) return;
+      if (e.key >= "0" && e.key <= "9") onInput(e.key);
+      else if (e.key === "Backspace") onDelete();
+      else if (e.key === "Enter") onSubmit();
+      else if (e.key === "-") onInput("-");
+    };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [mode, locked, typed]);
+
+  const shaking = feedback && feedback.state === "bad";
+
+  return (
+    <div className="screen round">
+      <header className="round-head">
+        <button className="icon-btn" onClick={onExit} aria-label="Back">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+        </button>
+        <div className="round-meta">
+          <span className="round-op">{opMeta.label}</span>
+          <span className="round-lvl">{LEVELS[level - 1].label}</span>
         </div>
-        <div id="feedback" class="feedback"></div>
-      </div>
-    </section>
+        <div className="round-points"><b>{stats.points}</b><small>pts</small></div>
+      </header>
 
-    <!-- Поздравления -->
-    <section id="congratulations" class="panel hidden">
-      <div class="congrats">
-        <h2>🎉 Great job!</h2>
-        <p id="summary-line">You solved all 10 problems.</p>
-        <div id="details-line" class="meta" style="margin:0 0 16px"></div>
-        <button class="ghost" onclick="showMainMenu()">Try again</button>
+      <ProgressTrack total={roundLength} current={stepIndex} results={stats.results} />
+      <div className="round-count">Step {stepIndex + 1} of {roundLength}</div>
+
+      <div className={"q-card" + (locked ? " q-solved" : "") + (shaking ? " q-shake" : "")}>
+        <div className="q-expr">{problem.text}</div>
+        <div className="q-eq">=</div>
+        <div className="q-answer">
+          {mode === "keypad"
+            ? <span className={"q-typed" + (typed ? "" : " q-empty")}>{typed || "?"}</span>
+            : <span className="q-typed q-empty">?</span>}
+        </div>
       </div>
-    </section>
-  </div>
+
+      <div className="answer-zone">
+        {feedback && <Feedback state={feedback.state} message={feedback.message} />}
+        {hintShown && !locked && <div className="hint"><span className="hint-tag">Hint</span>{problem.hint}</div>}
+        {mode === "choice"
+          ? <ChoiceGrid choices={problem.choices} onPick={checkAnswer} disabled={locked} eliminated={eliminated} picked={picked} answer={problem.answer} locked={locked} />
+          : <Keypad value={typed} onInput={onInput} onDelete={onDelete} onSubmit={onSubmit} disabled={locked} canSubmit={typed.length > 0} />}
+      </div>
+    </div>
+  );
+}
+
+/* --- RESULTS --- */
+function ResultsScreen({ data, onReplay, onHome, beep }) {
+  const [show, setShow] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setShow(true), 60); beep(880); return () => clearTimeout(t); }, []);
+  const accuracy = Math.round((data.perfect / data.total) * 100);
+  const mm = Math.floor(data.seconds / 60), ss = data.seconds % 60;
+  const timeStr = mm > 0 ? `${mm}m ${ss}s` : `${ss}s`;
+  const headline = data.stars === 3 ? "Outstanding!" : data.stars === 2 ? "Great job!" : "Round complete!";
+
+  return (
+    <div className="screen results">
+      <Confetti run={show && data.stars >= 2} />
+      <div className="results-card">
+        <StarRow count={data.stars} size={46} animate={show} />
+        <h2 className="results-title">{headline}</h2>
+        <p className="results-sub">You finished all {data.total} steps.</p>
+        <div className="stat-grid">
+          <div className="stat stat-big">
+            <div className="stat-value">{data.points}</div>
+            <div className="stat-label">Points</div>
+          </div>
+          <div className="stat">
+            <div className="stat-value">{timeStr}</div>
+            <div className="stat-label">Time</div>
+          </div>
+          <div className="stat">
+            <div className="stat-value">{accuracy}%</div>
+            <div className="stat-label">First-try</div>
+          </div>
+          <div className="stat">
+            <div className="stat-value">{data.mistakes}</div>
+            <div className="stat-label">{data.mistakes === 1 ? "Mistake" : "Mistakes"}</div>
+          </div>
+        </div>
+        <div className="results-actions">
+          <button className="btn-primary big" onClick={() => { beep(720); onReplay(); }}>Play again</button>
+          <button className="btn-ghost" onClick={() => { beep(560); onHome(); }}>Choose another</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// APP ROOT
+// ============================================================
+let _actx = null;
+function makeBeeper(enabledRef) {
+  return (freq) => {
+    if (!enabledRef.current) return;
+    try {
+      _actx = _actx || new (window.AudioContext || window.webkitAudioContext)();
+      const o = _actx.createOscillator(), g = _actx.createGain();
+      o.type = "triangle"; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, _actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.12, _actx.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, _actx.currentTime + 0.18);
+      o.connect(g); g.connect(_actx.destination);
+      o.start(); o.stop(_actx.currentTime + 0.19);
+    } catch (e) {}
+  };
+}
+
+const ACCENTS = {
+  pop:  ["", "#ff5747", "#2f6df0", "#7a52e8", "#16a34a"],
+  calm: ["", "#4f9d8a", "#5b86c4", "#c07ab0", "#d9883e"],
+  neon: ["", "#5fe3c9", "#a78bfa", "#ff6b8a", "#ffd166"],
+};
+
+function App() {
+  const [themeId, setThemeId] = useState("pop");
+  const [accent, setAccent] = useState("");
+  const [roundLength] = useState(10);
+  const [sound, setSound] = useState(false);
+  const [view, setView] = useState({ name: "home" });
+  const rootRef = useRef(null);
+  const soundRef = useRef(false);
+  useEffect(() => { soundRef.current = sound; }, [sound]);
+  const beep = useMemo(() => makeBeeper(soundRef), []);
+
+  useEffect(() => {
+    if (rootRef.current) applyTheme(rootRef.current, themeId, accent);
+  }, [themeId, accent]);
+
+  const cycleTheme = () => {
+    const order = ["pop", "calm", "neon"];
+    const next = order[(order.indexOf(themeId) + 1) % order.length];
+    setThemeId(next);
+    setAccent("");
+  };
+
+  const startRound = (op, level) => setView({ name: "round", config: { op, level, roundLength } });
+  const finishRound = (data) => setView({ name: "results", data });
+  const replay = () => { const c = view.data.config; setView({ name: "round", config: { ...c, roundLength } }); };
+
+  return (
+    <div className="app-root" ref={rootRef}>
+      <div className="stage">
+        {view.name === "home" &&
+          <HomeScreen onStart={startRound} themeId={themeId} onCycleTheme={cycleTheme} beep={beep} />}
+        {view.name === "round" &&
+          <RoundScreen key={JSON.stringify(view.config) + Math.random()} config={view.config} onFinish={finishRound} onExit={() => setView({ name: "home" })} beep={beep} />}
+        {view.name === "results" &&
+          <ResultsScreen data={view.data} onReplay={replay} onHome={() => setView({ name: "home" })} beep={beep} />}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+{% endraw %}
+  </script>
 
   <script>
-    let currentOperation = '';
-    let currentDifficulty = '';
-    let currentProblemIndex = 0;
-    let problems = [];
-
-    function handleBack() {
-      if (!document.getElementById('difficulty-menu').classList.contains('hidden')) {
-        showMainMenu();
-      } else if (!document.getElementById('math-problem').classList.contains('hidden')) {
-        showDifficultyMenu();
-      }
-    }
-
-    function selectOperation(operation) {
-      currentOperation = operation;
-      document.getElementById('main-menu').classList.add('hidden');
-      document.getElementById('difficulty-menu').classList.remove('hidden');
-      document.getElementById('math-problem').classList.add('hidden');
-      document.getElementById('congratulations').classList.add('hidden');
-      document.getElementById('back-btn').classList.remove('hidden');
-    }
-
-    function selectDifficulty(difficulty) {
-      currentDifficulty = difficulty;
-      generateProblems();
-      showMathProblem();
-    }
-
-    function generateProblems() {
-      problems = [];
-      currentProblemIndex = 0;
-
-      for (let i = 0; i < 10; i++) {
-        let problem;
-        let answer;
-
-        switch (currentOperation) {
-          case 'addition': {
-            const ranges = {
-              easy: [1, 20],
-              medium: [10, 110],
-              hard: [100, 1100]
-            }[currentDifficulty];
-            const a = randInt(ranges[0], ranges[1]);
-            const b = randInt(ranges[0], ranges[1]);
-            problem = `${a} + ${b} = ?`;
-            answer = a + b;
-            break;
-          }
-          case 'subtraction': {
-            const ranges = {
-              easy: [10, 30],
-              medium: [50, 250],
-              hard: [500, 2500]
-            }[currentDifficulty];
-            const a = randInt(ranges[0], ranges[1]);
-            const b = randInt(ranges[0] / 2, a - 1);
-            problem = `${a} - ${b} = ?`;
-            answer = a - b;
-            break;
-          }
-          case 'multiplication': {
-            const ranges = {
-              easy: [1, 10],
-              medium: [5, 25],
-              hard: [10, 60]
-            }[currentDifficulty];
-            const a = randInt(ranges[0], ranges[1]);
-            const b = randInt(ranges[0], ranges[1]);
-            problem = `${a} × ${b} = ?`;
-            answer = a * b;
-            break;
-          }
-          case 'division': {
-            const bRange = { easy: [1, 10], medium: [5, 25], hard: [10, 60] }[currentDifficulty];
-            const divisor = randInt(bRange[0], bRange[1]);
-            const correctAnswer = randInt(bRange[0], bRange[1]);
-            const dividend = divisor * correctAnswer; // гарантируем целый ответ
-            problem = `${dividend} ÷ ${divisor} = ?`;
-            answer = correctAnswer;
-            break;
-          }
-          case 'complex': {
-            if (currentDifficulty === 'easy') {
-              let a, b, c, attempts = 0;
-              do {
-                c = randInt(2, 6);
-                let res = randInt(2, 8);
-                a = randInt(1, 10);
-                b = res * c - a;
-                attempts++;
-              } while ((a + b) % c !== 0 || b < 1 || b > 15 || attempts > 100);
-              problem = `(${a} + ${b}) ÷ ${c} = ?`;
-              answer = (a + b) / c;
-            } else if (currentDifficulty === 'medium') {
-              let a, b, c, d, e, attempts = 0;
-              do {
-                e = randInt(2, 5);
-                let res = randInt(2, 6);
-                c = randInt(4, 10);
-                d = randInt(2, c - 1);
-                let denominator = c - d;
-                b = randInt(1, 8);
-                a = res * denominator * e + b;
-                attempts++;
-              } while (((a - b) % (c - d) !== 0) || (c - d) === 0 || a > 15 || attempts > 100);
-              problem = `(${a} - ${b}) ÷ (${c} - ${d}) × ${e} = ?`;
-              answer = ((a - b) / (c - d)) * e;
-            } else {
-              let a, b, c, d, e, attempts = 0;
-              do {
-                c = randInt(2, 6);
-                let res = randInt(2, 6);
-                a = randInt(3, 10);
-                b = res * c - a;
-                d = randInt(6, 12);
-                e = randInt(2, 6);
-                attempts++;
-              } while (((a + b) % c !== 0) || (d - e) <= 0 || b > 15 || attempts > 100);
-              problem = `((${a} + ${b}) ÷ ${c}) × (${d} - ${e}) = ?`;
-              answer = ((a + b) / c) * (d - e);
-            }
-            answer = Math.round(answer); // всегда целое
-            break;
-          }
-        }
-
-        problems.push({ problem, answer, attempts: 0, solved: false, firstTryCorrect: null });
-      }
-    }
-
-    function showMathProblem() {
-      document.getElementById('main-menu').classList.add('hidden');
-      document.getElementById('difficulty-menu').classList.add('hidden');
-      document.getElementById('math-problem').classList.remove('hidden');
-      document.getElementById('congratulations').classList.add('hidden');
-      document.getElementById('back-btn').classList.remove('hidden');
-      document.getElementById('feedback').textContent = '';
-      displayCurrentProblem();
-    }
-
-    function displayCurrentProblem() {
-      const { problem } = problems[currentProblemIndex];
-      document.getElementById('problem-text').textContent = problem;
-      document.getElementById('answer-input').value = '';
-      document.getElementById('answer-input').focus();
-
-      const progress = ((currentProblemIndex + 1) / 10) * 100;
-      document.getElementById('progress-bar').style.width = progress + '%';
-      document.getElementById('progress-text').textContent = `Problem ${currentProblemIndex + 1} of 10`;
-    }
-
-    function checkAnswer() {
-      const input = document.getElementById('answer-input');
-      const feedback = document.getElementById('feedback');
-      const userAnswer = Number(input.value);
-      const current = problems[currentProblemIndex];
-      current.attempts += 1;
-
-      if (Number.isNaN(userAnswer)) {
-        feedback.textContent = 'Enter a number';
-        feedback.className = 'feedback bad';
-        input.classList.remove('shake');
-        void input.offsetWidth; // restart animation
-        input.classList.add('shake');
-        return;
-      }
-
-      if (userAnswer === current.answer) {
-        feedback.textContent = 'Correct!';
-        feedback.className = 'feedback ok';
-        current.solved = true;
-        current.firstTryCorrect = current.attempts === 1;
-        setTimeout(() => {
-          currentProblemIndex++;
-          if (currentProblemIndex >= 10) {
-            showCongratulations();
-          } else {
-            displayCurrentProblem();
-            feedback.textContent = '';
-          }
-        }, 420);
-      } else {
-        feedback.textContent = 'Incorrect. Try again';
-        feedback.className = 'feedback bad';
-        input.classList.remove('shake');
-        void input.offsetWidth; // restart animation
-        input.classList.add('shake');
-        input.focus();
-        input.select();
-      }
-    }
-
-    function showCongratulations() {
-      document.getElementById('main-menu').classList.add('hidden');
-      document.getElementById('difficulty-menu').classList.add('hidden');
-      document.getElementById('math-problem').classList.add('hidden');
-      document.getElementById('congratulations').classList.remove('hidden');
-      document.getElementById('back-btn').classList.add('hidden');
-
-      const firstTry = problems.filter(p => p.firstTryCorrect === true).length;
-      const notFirst = problems
-        .map((p, i) => ({ idx: i + 1, first: p.firstTryCorrect }))
-        .filter(x => x.first === false)
-        .map(x => x.idx);
-
-      const summary = `First-try correct: ${firstTry} of 10`;
-      const details = notFirst.length
-        ? `Not on first try: problems # ${notFirst.join(', ')}`
-        : 'All solved on the first try! Excellent!';
-
-      document.getElementById('summary-line').textContent = summary;
-      document.getElementById('details-line').textContent = details;
-    }
-
-    function showDifficultyMenu() {
-      document.getElementById('main-menu').classList.add('hidden');
-      document.getElementById('difficulty-menu').classList.remove('hidden');
-      document.getElementById('math-problem').classList.add('hidden');
-      document.getElementById('congratulations').classList.add('hidden');
-      document.getElementById('back-btn').classList.remove('hidden');
-    }
-
-    function showMainMenu() {
-      document.getElementById('main-menu').classList.remove('hidden');
-      document.getElementById('difficulty-menu').classList.add('hidden');
-      document.getElementById('math-problem').classList.add('hidden');
-      document.getElementById('congratulations').classList.add('hidden');
-      document.getElementById('back-btn').classList.add('hidden');
-      currentOperation = '';
-      currentDifficulty = '';
-      currentProblemIndex = 0;
-      problems = [];
-    }
-
-    function randInt(min, max) { // [min, max]
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    document.getElementById('answer-input').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') checkAnswer();
-    });
-
-    // PWA: service worker + install prompt
+    // PWA
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js').catch(() => {});
     }
@@ -530,9 +869,7 @@
       if (!deferredPrompt) return;
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        installBtn.style.display = 'none';
-      }
+      if (outcome === 'accepted') installBtn.style.display = 'none';
       deferredPrompt = null;
     });
   </script>
