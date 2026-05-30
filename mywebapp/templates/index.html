@@ -131,7 +131,10 @@
     background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius);
     box-shadow: var(--card-shadow); padding: 24px; transition: border-color .25s;
   }
-  .q-expr { font-family: var(--display-font); font-weight: 600; font-size: clamp(40px, 13vw, 66px); letter-spacing: -.01em; text-align: center; line-height: 1.05; }
+  .q-expr { font-family: var(--display-font); font-weight: 600; letter-spacing: -.01em; text-align: center; line-height: 1.08; text-wrap: balance; }
+  .q-expr.q-len-sm { font-size: clamp(38px, 11.5vw, 58px); }
+  .q-expr.q-len-md { font-size: clamp(32px, 9vw, 46px); }
+  .q-expr.q-len-lg { font-size: clamp(26px, 7vw, 38px); }
   .q-eq { font-family: var(--display-font); font-size: 26px; color: var(--muted); }
   .q-answer { min-height: 64px; display: grid; place-items: center; }
   .q-typed { font-family: var(--display-font); font-weight: 700; font-size: clamp(44px, 14vw, 64px); color: var(--accent); line-height: 1; }
@@ -720,7 +723,7 @@ function RoundScreen({ config, onFinish, onExit, beep }) {
       <div className="round-count">Step {stepIndex + 1} of {roundLength}</div>
 
       <div className={"q-card" + (locked ? " q-solved" : "") + (shaking ? " q-shake" : "")}>
-        <div className="q-expr">{problem.text}</div>
+        <div className={"q-expr q-len-" + (problem.text.length > 13 ? "lg" : problem.text.length > 9 ? "md" : "sm")}>{problem.text}</div>
         <div className="q-eq">=</div>
         <div className="q-answer">
           {mode === "keypad"
