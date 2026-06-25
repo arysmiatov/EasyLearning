@@ -25,6 +25,7 @@
   button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
   .display { font-family: var(--display-font); font-feature-settings: "tnum" 1; }
 
+  .app-root { background-image: var(--app-grad); }
   .app-root { min-height: 100dvh; background: var(--bg); display: flex; justify-content: center; transition: background .4s ease; }
   .stage {
     width: 100%; max-width: 560px; min-height: 100dvh; background: var(--app);
@@ -42,9 +43,9 @@
   .home-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: max(8px, env(safe-area-inset-top)); }
   .brand { display: flex; align-items: center; gap: 13px; }
   .brand-mark {
-    width: 50px; height: 50px; border-radius: 16px; background: var(--accent); color: var(--accent-ink);
+    width: 50px; height: 50px; border-radius: 16px; background: var(--accent); background-image: var(--accent-grad); color: var(--accent-ink);
     display: grid; place-items: center; font-family: var(--display-font); font-weight: 700; font-size: 24px;
-    position: relative; box-shadow: var(--key-shadow);
+    position: relative; box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--accent) 55%, transparent);
   }
   .brand-mark span { position: absolute; right: 7px; bottom: 4px; font-size: 13px; opacity: .85; }
   .brand-name { font-family: var(--display-font); font-size: 23px; font-weight: 700; letter-spacing: -.02em; }
@@ -60,7 +61,7 @@
   /* score strip on home */
   .score-strip { display: flex; align-items: center; justify-content: space-between; gap: 14px; background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius); padding: 16px 20px; }
   .score-main { display: flex; flex-direction: column; gap: 1px; }
-  .score-total { font-size: 34px; font-weight: 700; color: var(--accent); line-height: 1; letter-spacing: -.02em; }
+  .score-total { font-size: 34px; font-weight: 700; color: var(--accent); line-height: 1; letter-spacing: -.02em; background-image: var(--accent-grad, linear-gradient(var(--accent), var(--accent))); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
   .score-total-label { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
   .score-sub { display: flex; gap: 10px; }
   .score-chip { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 56px; padding: 8px 6px; background: var(--bg); border-radius: var(--radius-sm); }
@@ -107,8 +108,8 @@
 
   .btn-primary {
     display: inline-flex; align-items: center; justify-content: center; gap: 9px;
-    background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 16px;
-    border-radius: var(--radius-sm); padding: 15px 22px; box-shadow: var(--key-shadow);
+    background: var(--accent); background-image: var(--accent-grad); color: var(--accent-ink); font-weight: 600; font-size: 16px;
+    border-radius: var(--radius-sm); padding: 15px 22px; box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--accent) 60%, transparent);
     transition: transform .12s ease, filter .15s;
   }
   .btn-primary.big { width: 100%; font-size: 18px; padding: 18px; border-radius: var(--radius); }
@@ -131,7 +132,7 @@
 
   .progress-track { display: flex; gap: 5px; }
   .seg { flex: 1; height: 8px; border-radius: 4px; background: var(--line); transition: background .3s; }
-  .seg-active { background: var(--accent); }
+  .seg-active { background: var(--accent); background-image: var(--accent-grad); }
   .seg-done { background: var(--good); }
   .seg-retry { background: var(--gold); }
   .round-count { text-align: center; font-size: 13px; color: var(--muted); font-weight: 500; margin-top: -6px; }
@@ -195,7 +196,7 @@
   }
   .key:active { transform: translateY(2px); box-shadow: none; background: var(--accent-soft); }
   .key-util { color: var(--muted); }
-  .key-submit { grid-column: 1 / -1; background: var(--accent); color: var(--accent-ink); font-size: 19px; padding: 17px; }
+  .key-submit { grid-column: 1 / -1; background: var(--accent); background-image: var(--accent-grad); color: var(--accent-ink); font-size: 19px; padding: 17px; box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--accent) 60%, transparent); }
   .key:disabled { opacity: .5; }
 
   /* ---------- RESULTS ---------- */
@@ -205,8 +206,8 @@
   .results-title { font-family: var(--display-font); font-size: clamp(30px, 8vw, 40px); font-weight: 700; letter-spacing: -.02em; margin-top: 4px; }
   .results-sub { color: var(--muted); font-size: 15px; margin-bottom: 18px; }
 
-  .round-score-box { width: 100%; background: var(--accent-soft); border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .round-score-num { font-size: 44px; font-weight: 700; color: var(--accent); line-height: 1; letter-spacing: -.02em; }
+  .round-score-box { width: 100%; background: var(--accent-soft); background-image: var(--accent-grad-soft); border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .round-score-num { font-size: 44px; font-weight: 700; color: var(--accent); line-height: 1; letter-spacing: -.02em; background-image: var(--accent-grad, linear-gradient(var(--accent), var(--accent))); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
   .round-score-breakdown { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
   .bd-item { font-size: 12.5px; font-weight: 600; padding: 5px 10px; border-radius: 999px; background: var(--surface); }
   .bd-good { color: var(--good); }
@@ -218,7 +219,7 @@
   .total-banner-val { font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1; }
   .stat-grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
   .stat { background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 16px; display: flex; flex-direction: column; gap: 3px; }
-  .stat-big { grid-column: 1 / -1; background: var(--accent-soft); border-color: transparent; }
+  .stat-big { grid-column: 1 / -1; background: var(--accent-soft); background-image: var(--accent-grad-soft); border-color: transparent; }
   .stat-big .stat-value { color: var(--accent); }
   .stat-value { font-family: var(--display-font); font-weight: 700; font-size: 30px; line-height: 1; }
   .stat-label { font-size: 12.5px; color: var(--muted); font-weight: 500; }
@@ -257,16 +258,20 @@
 const THEMES = {
   pop: {
     id: "pop", label: "Pop", blurb: "Bright & bold",
-    swatch: ["#faf8f4", "#ff5747", "#15110e"], dark: false,
+    swatch: ["#f7faff", "#3b82f6", "#6366f1"], dark: false,
     vars: {
-      "--bg": "#f4f1ea", "--app": "#fbf9f5", "--surface": "#ffffff",
-      "--ink": "#1a1512", "--muted": "#8a8178", "--line": "#e7e1d6",
-      "--accent": "#ff5747", "--accent-soft": "#ffe9e5", "--accent-ink": "#ffffff",
-      "--good": "#1f9d6b", "--good-soft": "#e1f3ea", "--bad": "#e23b54", "--bad-soft": "#fce3e7",
+      "--bg": "#eaf1fc", "--app": "#f6faff", "--surface": "#ffffff",
+      "--ink": "#15233f", "--muted": "#7587a6", "--line": "#e1e9f6",
+      "--accent": "#3b73f4", "--accent-2": "#6366f1",
+      "--accent-grad": "linear-gradient(135deg, #38bdf8 0%, #3b73f4 48%, #6366f1 100%)",
+      "--accent-grad-soft": "linear-gradient(135deg, #eef5ff 0%, #eef0ff 100%)",
+      "--app-grad": "radial-gradient(120% 80% at 50% -10%, #eaf2ff 0%, #f6faff 46%, #f6faff 100%)",
+      "--accent-soft": "#e8f0ff", "--accent-ink": "#ffffff",
+      "--good": "#0ea66f", "--good-soft": "#dcf4ea", "--bad": "#ef4d6a", "--bad-soft": "#fde4e9",
       "--gold": "#f5a623", "--display-font": "'Space Grotesk', sans-serif",
       "--body-font": "'Figtree', sans-serif", "--radius": "22px", "--radius-sm": "14px",
-      "--key-shadow": "0 4px 0 rgba(21,17,14,0.12)", "--card-shadow": "0 18px 50px -28px rgba(21,17,14,0.35)",
-      "--pad-bg": "#f1ece2",
+      "--key-shadow": "0 4px 0 rgba(21,42,79,0.10)", "--card-shadow": "0 20px 54px -28px rgba(36,68,138,0.42)",
+      "--pad-bg": "#eef3fc",
     },
   },
   calm: {
@@ -299,10 +304,22 @@ const THEMES = {
   },
 };
 
+// Themes don't all define the same var keys (e.g. only "pop" has gradient
+// vars) — clear every known key first so switching away from a theme can't
+// leave a stale value (like a gradient) stuck from the previous one.
+const ALL_THEME_VAR_KEYS = Array.from(new Set(Object.values(THEMES).flatMap((t) => Object.keys(t.vars))));
+
 function applyTheme(el, themeId, accentOverride) {
   const theme = THEMES[themeId] || THEMES.pop;
-  Object.entries(theme.vars).forEach(([k, v]) => el.style.setProperty(k, v));
-  if (accentOverride) el.style.setProperty("--accent", accentOverride);
+  // Also apply to <body>: it's an ANCESTOR of el (.app-root), so body's own
+  // `color: var(--ink, ...)` rule can never see vars set only on el — any
+  // text that inherits color instead of redeclaring var(--ink) itself would
+  // otherwise be stuck on the hardcoded fallback regardless of theme.
+  [el, document.body].forEach((target) => {
+    ALL_THEME_VAR_KEYS.forEach((k) => target.style.removeProperty(k));
+    Object.entries(theme.vars).forEach(([k, v]) => target.style.setProperty(k, v));
+    if (accentOverride) target.style.setProperty("--accent", accentOverride);
+  });
   el.dataset.themeDark = theme.dark ? "1" : "0";
 }
 
