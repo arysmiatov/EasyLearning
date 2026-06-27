@@ -683,13 +683,26 @@ function buildStep(op, level) {
 const PRAISE = ["Correct!", "Nice!", "Perfect!", "Brilliant!", "Well done!", "Exactly!", "Spot on!"];
 function pickPraise() { return PRAISE[Math.floor(Math.random() * PRAISE.length)]; }
 
-const REWARD = 10;          // points for a correct answer
-const PENALTY = 8;          // points lost per wrong attempt
-const TIME_BONUS_MAX = 50;  // max speed bonus per round
-const MS_PER_STEP = 8000;   // time window allotted per step before bonus drains
+// Points per correct answer, by operation and difficulty level (1-4). Level is
+// the dominant lever (12x add level1->level4 within a level is a much smaller
+// jump than across levels); operation difficulty (add < sub < mul < div < mix)
+// adds a smaller bump on top. The hardest cell (mix, level 4) caps a flawless
+// round's base score at exactly 200 (10 steps x 20).
+const REWARD_TABLE = {
+  add: [2, 4, 7, 12],
+  sub: [2, 5, 8, 13],
+  mul: [3, 5, 9, 15],
+  div: [3, 6, 10, 17],
+  mix: [4, 7, 12, 20],
+};
+function rewardPerStep(op, level) { return REWARD_TABLE[op][level - 1]; }
+
+const PENALTY_RATIO = 0.8;     // points lost per wrong attempt, relative to that step's reward
+const TIME_BONUS_RATIO = 0.5;  // max speed bonus for the round, relative to its perfect base score
+const MS_PER_STEP = 8000;      // time window allotted per step before the bonus drains
 
 // Speed-bonus bar that drains over the round; the leftover is awarded at finish.
-function TimeBar({ windowMs, running, bonusRef }) {
+function TimeBar({ windowMs, running, bonusMax, bonusRef }) {
   const [frac, setFrac] = useState(1);
   const startRef = useRef(Date.now());
   useEffect(() => {
@@ -697,11 +710,11 @@ function TimeBar({ windowMs, running, bonusRef }) {
     const id = setInterval(() => {
       const f = Math.max(0, 1 - (Date.now() - startRef.current) / windowMs);
       setFrac(f);
-      if (bonusRef) bonusRef.current = Math.round(TIME_BONUS_MAX * f);
+      if (bonusRef) bonusRef.current = Math.round(bonusMax * f);
     }, 90);
     return () => clearInterval(id);
   }, [running]);
-  const bonus = Math.round(TIME_BONUS_MAX * frac);
+  const bonus = Math.round(bonusMax * frac);
   const low = frac < 0.25;
   return (
     <div className="timebar">
@@ -721,6 +734,10 @@ function RoundScreen({ config, onFinish, onExit, beep }) {
   const opMeta = OPERATIONS.find((o) => o.id === op);
   const mode = answerMode(op, level);
 
+  const reward = rewardPerStep(op, level);
+  const penalty = Math.round(reward * PENALTY_RATIO);
+  const timeBonusMax = Math.round(reward * roundLength * TIME_BONUS_RATIO);
+
   const [stepIndex, setStepIndex] = useState(0);
   const [problem, setProblem] = useState(() => buildStep(op, level));
   const [typed, setTyped] = useState("");
@@ -734,7 +751,7 @@ function RoundScreen({ config, onFinish, onExit, beep }) {
 
   const statsRef = useRef({ results: [], mistakes: 0, earned: 0, penalty: 0, perfect: 0, start: Date.now() });
   const stats = statsRef.current;
-  const bonusRef = useRef(TIME_BONUS_MAX);
+  const bonusRef = useRef(timeBonusMax);
   const [finished, setFinished] = useState(false);
 
   function syncPoints() { setPoints(Math.max(0, stats.earned - stats.penalty)); }
@@ -761,7 +778,7 @@ function RoundScreen({ config, onFinish, onExit, beep }) {
 
   function registerCorrect() {
     const wrong = attempts;
-    stats.earned += REWARD;
+    stats.earned += reward;
     if (wrong === 0) stats.perfect += 1;
     stats.results.push(wrong === 0 ? "good" : "retry");
     syncPoints();
@@ -775,11 +792,11 @@ function RoundScreen({ config, onFinish, onExit, beep }) {
     const a = attempts + 1;
     setAttempts(a);
     stats.mistakes += 1;
-    stats.penalty += PENALTY;
+    stats.penalty += penalty;
     syncPoints();
     beep(180);
     if (a >= 2) setHintShown(true);
-    setFeedback({ state: "bad", message: a >= 2 ? "Not yet — here’s a hint." : `Try again! −${PENALTY}` });
+    setFeedback({ state: "bad", message: a >= 2 ? "Not yet — here’s a hint." : `Try again! −${penalty}` });
     if (mode === "choice") setEliminated((e) => [...e, val]);
   }
 
@@ -822,7 +839,7 @@ function RoundScreen({ config, onFinish, onExit, beep }) {
       </header>
 
       <ProgressTrack total={roundLength} current={stepIndex} results={stats.results} />
-      <TimeBar windowMs={roundLength * MS_PER_STEP} running={!finished} bonusRef={bonusRef} />
+      <TimeBar windowMs={roundLength * MS_PER_STEP} running={!finished} bonusMax={timeBonusMax} bonusRef={bonusRef} />
       <div className="round-count">Step {stepIndex + 1} of {roundLength}</div>
 
       <div className={"q-card" + (locked ? " q-solved" : "") + (shaking ? " q-shake" : "")}>
